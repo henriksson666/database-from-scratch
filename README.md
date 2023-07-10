@@ -1,7 +1,8 @@
 # database-from-scratch
-Criação de um database do 0.
-
-Criação do banco de dados relacional:
+Criação de um database do 0. Com este banco de dados, podemos persistir os dados mais gerais
+da estrutura e do funcionamento de uma universidade. O modelo é relacional estendido. Criação
+do banco de dados relacional. Segue abaixo o código para criar o banco de dados, inserir dados
+e fazer algumas consultas:
 
 CREATE DATABASE university;
 
@@ -182,3 +183,78 @@ INSERT INTO head_of_departments (professor_id, department_id) VALUES (2, 2);
 -- Insert sample head of collegiates
 INSERT INTO head_of_collegiates (professor_id, collegiate_id) VALUES (1, 1);
 INSERT INTO head_of_collegiates (professor_id, collegiate_id) VALUES (2, 2);
+
+
+Algumas consultas que podem ser feitas:
+
+
+SELECT * FROM courses;
+
+SELECT students.*
+FROM students
+JOIN discipline_enrollments ON students.id = discipline_enrollments.student_id
+JOIN disciplines ON discipline_enrollments.discipline_id = disciplines.id
+WHERE disciplines.name = 'História';
+
+
+SELECT students.*
+FROM students
+JOIN course_enrollments ON students.id = course_enrollments.student_id
+JOIN courses ON course_enrollments.course_id = courses.id
+WHERE courses.name = 'Introduction to World History';
+
+
+SELECT faculties.id, faculties.name, COUNT(departments.id) AS department_count
+FROM faculties
+JOIN departments ON faculties.id = departments.faculty_id
+GROUP BY faculties.id
+HAVING department_count > 1;
+
+
+SELECT departments.id, departments.name, COUNT(professors.id) AS professor_count
+FROM departments
+JOIN professors ON departments.id = professors.department_id
+GROUP BY departments.id
+HAVING professor_count > 3;
+
+
+SELECT disciplines.id, disciplines.name, COUNT(courses.id) AS course_count
+FROM disciplines
+JOIN courses ON disciplines.id = courses.discipline_id
+GROUP BY disciplines.id
+HAVING course_count > 2;
+
+
+SELECT collegiates.id, collegiates.name, COUNT(students.id) AS student_count
+FROM collegiates
+JOIN students ON collegiates.id = students.collegiate_id
+GROUP BY collegiates.id
+HAVING student_count > 10;
+
+
+SELECT departments.id, departments.name, COUNT(professors.id) AS professor_count
+FROM departments
+JOIN professors ON departments.id = professors.department_id
+GROUP BY departments.id
+ORDER BY professor_count DESC;
+
+
+SELECT * FROM students
+ORDER BY last_name ASC;
+
+
+SELECT departments.id, departments.name, COUNT(students.id) AS student_count
+FROM departments
+JOIN students ON departments.id = students.department_id
+GROUP BY departments.id, departments.name;
+
+
+SELECT faculties.id, faculties.name, AVG(professor_count) AS avg_professor_count
+FROM (
+    SELECT departments.faculty_id, COUNT(professors.id) AS professor_count
+    FROM departments
+    JOIN professors ON departments.id = professors.department_id
+    GROUP BY departments.faculty_id
+) AS department_stats
+JOIN faculties ON department_stats.faculty_id = faculties.id
+GROUP BY faculties.id, faculties.name;

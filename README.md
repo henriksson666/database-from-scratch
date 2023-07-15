@@ -1,260 +1,54 @@
-# database-from-scratch
-Criação de um database do 0. Com este banco de dados, podemos persistir os dados mais gerais
-da estrutura e do funcionamento de uma universidade. O modelo é relacional estendido. Criação
-do banco de dados relacional. Segue abaixo o código para criar o banco de dados, inserir dados
-e fazer algumas consultas:
+# Auto Repair Shop Management System
 
-CREATE DATABASE university;
+This project is a database schema for an Auto Repair Shop Management System. It provides a structured database design to manage customers, vehicles, services, work orders, parts inventory, suppliers, employees, and invoices for an auto repair shop.
 
-USE university;
+## Table of Contents
 
-CREATE TABLE faculties (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(255) NOT NULL
-);
+- [Overview](#overview)
+- [Database Schema](#database-schema)
+- [Setup](#setup)
+- [Usage](#usage)
+- [Contributing](#contributing)
 
-CREATE TABLE departments (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(255) NOT NULL,
-  faculty_id INT NOT NULL,
-  FOREIGN KEY (faculty_id) REFERENCES faculties(id)
-);
+## Overview
 
-CREATE TABLE collegiates (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(255) NOT NULL,
-  department_id INT,
-  college_id INT,
-  FOREIGN KEY (department_id) REFERENCES departments(id),
-  FOREIGN KEY (college_id) REFERENCES faculties(id)
-);
+The Auto Repair Shop Management System is designed to help auto repair shops efficiently manage their operations. It allows the shop to maintain customer information, track vehicle details, manage services, create work orders, manage parts inventory, track suppliers, and generate invoices.
 
-CREATE TABLE professors (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  first_name VARCHAR(255) NOT NULL,
-  last_name VARCHAR(255) NOT NULL,
-  email VARCHAR(255) NOT NULL,
-  department_id INT,
-  collegiate_id INT,
-  faculty_id INT,
-  FOREIGN KEY (department_id) REFERENCES departments(id),
-  FOREIGN KEY (collegiate_id) REFERENCES collegiates(id),
-  FOREIGN KEY (faculty_id) REFERENCES faculties(id)
-);
+## Database Schema
 
-CREATE TABLE students (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  first_name VARCHAR(255) NOT NULL,
-  last_name VARCHAR(255) NOT NULL,
-  email VARCHAR(255) NOT NULL,
-  department_id INT,
-  collegiate_id INT,
-  FOREIGN KEY (department_id) REFERENCES departments(id),
-  FOREIGN KEY (collegiate_id) REFERENCES collegiates(id)
-);
+The database schema consists of the following tables:
 
-CREATE TABLE advisors (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  professor_id INT NOT NULL,
-  student_id INT NOT NULL,
-  FOREIGN KEY (professor_id) REFERENCES professors(id),
-  FOREIGN KEY (student_id) REFERENCES students(id)
-);
+- `customer`: Stores customer details including name, address, phone number, and email.
+- `vehicle`: Stores vehicle information including make, model, year, VIN, and the associated customer.
+- `service`: Stores information about different services offered by the auto repair shop.
+- `work_order`: Tracks work orders created for customers, including the customer, vehicle, service, order date, status, and price.
+- `part`: Stores information about parts including name, number, manufacturer, price, and associated supplier.
+- `inventory`: Tracks the inventory of parts, including the part, quantity, and availability.
+- `supplier`: Stores information about suppliers providing parts to the repair shop.
+- `employee`: Stores employee details including name, address, phone number, and email.
+- `invoice`: Stores invoice details including the customer, associated work order, invoice date, total amount, and payment method.
+- `employee_work_order`: Establishes a relationship between employees and work orders, allowing multiple employees to be associated with a work order.
 
-CREATE TABLE staff (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  first_name VARCHAR(255) NOT NULL,
-  last_name VARCHAR(255) NOT NULL,
-  email VARCHAR(255) NOT NULL,
-  department_id INT,
-  collegiate_id INT,
-  faculty_id INT,
-  FOREIGN KEY (department_id) REFERENCES departments(id),
-  FOREIGN KEY (collegiate_id) REFERENCES collegiates(id),
-  FOREIGN KEY (faculty_id) REFERENCES faculties(id)
-);
+## Setup
 
-CREATE TABLE disciplines (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(255) NOT NULL
-);
+To use this Auto Repair Shop Management System:
 
-CREATE TABLE courses (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(255) NOT NULL,
-  discipline_id INT NOT NULL,
-  FOREIGN KEY (discipline_id) REFERENCES disciplines(id)
-);
+1. Set up a MySQL database.
+2. Run the SQL statements provided in the [database-schema.sql](database-schema.sql) file to create the necessary tables and establish the relationships.
+3. Connect your application or use a database management tool to interact with the database.
 
-CREATE TABLE course_enrollments (
-  student_id INT NOT NULL,
-  course_id INT NOT NULL,
-  PRIMARY KEY (student_id, course_id),
-  FOREIGN KEY (student_id) REFERENCES students(id),
-  FOREIGN KEY (course_id) REFERENCES courses(id)
-);
+## Usage
 
-CREATE TABLE discipline_enrollments (
-  student_id INT NOT NULL,
-  discipline_id INT NOT NULL,
-  PRIMARY KEY (student_id, discipline_id),
-  FOREIGN KEY (student_id) REFERENCES students(id),
-  FOREIGN KEY (discipline_id) REFERENCES disciplines(id)
-);
+Once the database and tables are set up, you can start using the Auto Repair Shop Management System. Here are some common tasks:
 
-CREATE TABLE head_of_departments (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  professor_id INT NOT NULL,
-  department_id INT NOT NULL,
-  FOREIGN KEY (professor_id) REFERENCES professors(id),
-  FOREIGN KEY (department_id) REFERENCES departments(id)
-);
+- Add customers, vehicles, services, parts, suppliers, and employees to their respective tables.
+- Create work orders for customers, specifying the vehicle, services required, and assigning employees.
+- Update the status and pricing of work orders as they progress.
+- Track inventory levels of parts and manage supplier relationships.
+- Generate invoices for completed work orders and track payment details.
 
-CREATE TABLE head_of_collegiates (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  professor_id INT NOT NULL,
-  collegiate_id INT NOT NULL,
-  FOREIGN KEY (professor_id) REFERENCES professors(id),
-  FOREIGN KEY (collegiate_id) REFERENCES collegiates(id)
-);
+Modify the database schema or build an application on top of it to suit your specific requirements.
 
+## Contributing
 
-Formas de inserir dados no database:
-
-USE university;
-
--- Insert sample faculties
-INSERT INTO faculties (name) VALUES ('Faculdade de Arquitetura e Urbanismo');
-INSERT INTO faculties (name) VALUES ('Faculdade de Direito');
-INSERT INTO faculties (name) VALUES ('Faculdade de Educação');
-INSERT INTO faculties (name) VALUES ('Faculdade de Filosofia, Letras e Ciências Humanas');
-
--- Insert sample departments
-INSERT INTO departments (name, faculty_id) VALUES ('Departmento de História', 1);
-INSERT INTO departments (name, faculty_id) VALUES ('Departmento de Biologia', 2);
-INSERT INTO departments (name, faculty_id) VALUES ('Departmento de Geografia', 3);
-INSERT INTO departments (name, faculty_id) VALUES ('Departmento de Filosofia', 4);
-
--- Insert sample collegiates
-INSERT INTO collegiates (name, department_id, college_id) VALUES ('Colegiado de Geografia', 1, 1);
-INSERT INTO collegiates (name, department_id, college_id) VALUES ('Colegiado de História', 2, 1);
-
--- Insert sample professors
-INSERT INTO professors (first_name, last_name, email, department_id, collegiate_id, faculty_id) VALUES ('Ariana', 'Sousa', 'sousa.ariana@usp.edu', 1, NULL, 1);
-INSERT INTO professors (first_name, last_name, email, department_id, collegiate_id, faculty_id) VALUES ('Pedro', 'Santos', 'santos.pedro@usp.edu', 2, 2, NULL);
-
--- Insert sample students
-INSERT INTO students (first_name, last_name, email, department_id, collegiate_id) VALUES ('Kátia', 'Fonseca', 'katia.fonseca@usp.edu', 1, 1);
-INSERT INTO students (first_name, last_name, email, department_id, collegiate_id) VALUES ('André', 'Sousa', 'andre.sousa@usp.edu', 2, NULL);
-
--- Insert sample advisors
-INSERT INTO advisors (professor_id, student_id) VALUES (1, 2);
-INSERT INTO advisors (professor_id, student_id) VALUES (2, 1);
-
--- Insert sample staff
-INSERT INTO staff (first_name, last_name, email, department_id, collegiate_id, faculty_id) VALUES ('Emília', 'Rocha', 'emilia.rocha@usp.edu', 1, NULL, NULL);
-INSERT INTO staff (first_name, last_name, email, department_id, collegiate_id, faculty_id) VALUES ('Michael', 'Mendes', 'michael.mendes@usp.edu', NULL, NULL, 2);
-INSERT INTO staff (first_name, last_name, email, department_id, collegiate_id, faculty_id) VALUES ('Sophia', 'Carrera', 'sophia.carrera@usp.edu', NULL, 1, NULL);
-
--- Insert sample disciplines
-INSERT INTO disciplines (name) VALUES ('História');
-INSERT INTO disciplines (name) VALUES ('Biologia');
-INSERT INTO disciplines (name) VALUES ('Teoria da Computação');
-INSERT INTO disciplines (name) VALUES ('Linguagens Formais');
-
--- Insert sample courses
-INSERT INTO courses (name, discipline_id) VALUES ('Introdução à História da Computação', 1);
-INSERT INTO courses (name, discipline_id) VALUES ('Biologia Celular', 2);
-INSERT INTO courses (name, discipline_id) VALUES ('Biologia Molecular', 3);
-INSERT INTO courses (name, discipline_id) VALUES ('Biologia Evolutiva', 4);
-
--- Insert sample course enrollments
-INSERT INTO course_enrollments (student_id, course_id) VALUES (1, 1);
-INSERT INTO course_enrollments (student_id, course_id) VALUES (2, 2);
-
--- Insert sample discipline enrollments
-INSERT INTO discipline_enrollments (student_id, discipline_id) VALUES (1, 1);
-INSERT INTO discipline_enrollments (student_id, discipline_id) VALUES (2, 2);
-
--- Insert sample head of departments
-INSERT INTO head_of_departments (professor_id, department_id) VALUES (1, 1);
-INSERT INTO head_of_departments (professor_id, department_id) VALUES (2, 2);
-
--- Insert sample head of collegiates
-INSERT INTO head_of_collegiates (professor_id, collegiate_id) VALUES (1, 1);
-INSERT INTO head_of_collegiates (professor_id, collegiate_id) VALUES (2, 2);
-
-
-Algumas consultas que podem ser feitas:
-
-
-SELECT * FROM courses;
-
-SELECT students.*
-FROM students
-JOIN discipline_enrollments ON students.id = discipline_enrollments.student_id
-JOIN disciplines ON discipline_enrollments.discipline_id = disciplines.id
-WHERE disciplines.name = 'História';
-
-
-SELECT students.*
-FROM students
-JOIN course_enrollments ON students.id = course_enrollments.student_id
-JOIN courses ON course_enrollments.course_id = courses.id
-WHERE courses.name = 'Introduction to World History';
-
-
-SELECT faculties.id, faculties.name, COUNT(departments.id) AS department_count
-FROM faculties
-JOIN departments ON faculties.id = departments.faculty_id
-GROUP BY faculties.id
-HAVING department_count > 1;
-
-
-SELECT departments.id, departments.name, COUNT(professors.id) AS professor_count
-FROM departments
-JOIN professors ON departments.id = professors.department_id
-GROUP BY departments.id
-HAVING professor_count > 3;
-
-
-SELECT disciplines.id, disciplines.name, COUNT(courses.id) AS course_count
-FROM disciplines
-JOIN courses ON disciplines.id = courses.discipline_id
-GROUP BY disciplines.id
-HAVING course_count > 2;
-
-
-SELECT collegiates.id, collegiates.name, COUNT(students.id) AS student_count
-FROM collegiates
-JOIN students ON collegiates.id = students.collegiate_id
-GROUP BY collegiates.id
-HAVING student_count > 10;
-
-
-SELECT departments.id, departments.name, COUNT(professors.id) AS professor_count
-FROM departments
-JOIN professors ON departments.id = professors.department_id
-GROUP BY departments.id
-ORDER BY professor_count DESC;
-
-
-SELECT * FROM students
-ORDER BY last_name ASC;
-
-
-SELECT departments.id, departments.name, COUNT(students.id) AS student_count
-FROM departments
-JOIN students ON departments.id = students.department_id
-GROUP BY departments.id, departments.name;
-
-
-SELECT faculties.id, faculties.name, AVG(professor_count) AS avg_professor_count
-FROM (
-    SELECT departments.faculty_id, COUNT(professors.id) AS professor_count
-    FROM departments
-    JOIN professors ON departments.id = professors.department_id
-    GROUP BY departments.faculty_id
-) AS department_stats
-JOIN faculties ON department_stats.faculty_id = faculties.id
-GROUP BY faculties.id, faculties.name;
+Contributions to this project are welcome. If you find any issues or have suggestions for improvements, please open an issue or submit a pull request on the repository.
